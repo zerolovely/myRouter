@@ -1,0 +1,54 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Uboot
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board: [newland_nl-wr8103, newland_nl-wr9103] 
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: init env
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-aarch64-linux-gnu build-essential flex bison libssl-dev device-tree-compiler qemu-user-static
+          sudo timedatectl set-timezone Asia/Singapore
+
+      # Runs a set of commands using the runners shell
+      - name: get source
+        run: |
+          git clone --depth=1 https://github.com/hanwckf/bl-mt798x.git .
+
+      - name: compile
+        run: |
+          SOC=mt7981 BOARD=${{ matrix.board }} MULTI_LAYOUT=1 ./build.sh
+          echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+          
+      - name: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: u-boot_bin_${{ matrix.board }}${{ env.FILE_DATE }}
+          path: ./output
+
+
+
+
+
+
+
+
+
+
+
+          
