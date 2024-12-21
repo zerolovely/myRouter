@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        board: [newland_nl-wr8103, newland_nl-wr9103]
+        board: [newland_nl-wr8103, newland_nl-wr9103, konka_komi-a31]
         layout: [0, 1]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
