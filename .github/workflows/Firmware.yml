@@ -6,8 +6,7 @@ name: ImmortalWrt
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-env:
-  DEVICE_NAME: NL-WR9103
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -35,13 +34,15 @@ jobs:
       - name: config
         working-directory: ./openwrt
         run: |
+          git clone --depth=1 https://github.com/destan19/OpenAppFilter.git package/OpenAppFilter
           cp ../.config .
           sed -i 's/192.168.1.1/192.168.2.1/g' package/base-files/files/bin/config_generate
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           make defconfig
           echo -e "$(nproc) thread compile"
-          make -j$(nproc)
+          make download -j$(nproc) V=s
+          make -j$(nproc) V=s
           echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
       - name: Check space usage
@@ -50,14 +51,6 @@ jobs:
       - name: Upload bin
         uses: actions/upload-artifact@v4
         with:
-          name: ImmortalWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+          name: ImmortalWrt_${{ env.FILE_DATE }}
           path: openwrt/bin
-        
-
-
-
-
-
-          
-
-
+      
