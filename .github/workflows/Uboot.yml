@@ -15,8 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        board: [newland_nl-wr8103, newland_nl-wr9103, konka_komi-a31]
-        layout: [0, 1]
+        board: [konka_komi-a31]
+        layout: [0]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -41,3 +41,38 @@ jobs:
         with:
           name: u-boot_${{ matrix.board }}_${{ matrix.layout }}_${{ env.FILE_DATE }}
           path: ./output
+
+  build_m:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board: [newland_nl-wr8103, newland_nl-wr9103]
+        layout: [1]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: init env
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-aarch64-linux-gnu build-essential flex bison libssl-dev device-tree-compiler qemu-user-static
+          sudo timedatectl set-timezone Asia/Singapore
+
+      # Runs a set of commands using the runners shell
+      - name: get source
+        run: |
+          git clone --depth=1 https://github.com/hanwckf/bl-mt798x.git .
+
+      - name: compile
+        run: |
+          SOC=mt7981 BOARD=${{ matrix.board }} MULTI_LAYOUT=${{ matrix.layout }} ./build.sh
+          echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+          
+      - name: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: u-boot_${{ matrix.board }}_${{ matrix.layout }}_${{ env.FILE_DATE }}
+          path: ./output
+
+
+          
