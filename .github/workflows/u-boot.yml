@@ -10,7 +10,7 @@ on:
       board:
         required: true
         description: Router Model Name
-        type: string
+        type: choice
         default: newland_nl-wr9103
         options:
           - 'newland_nl-wr9103'
