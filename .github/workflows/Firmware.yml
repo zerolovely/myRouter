@@ -40,6 +40,7 @@ jobs:
           texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
           sudo timedatectl set-timezone Asia/Singapore
           git clone --depth=1 https://github.com/hanwckf/immortalwrt-mt798x.git openwrt
+          df -h
       - name: config
         working-directory: ./openwrt
         run: |
@@ -49,10 +50,10 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           #make defconfig
-          #yes n | make oldconfig
+          make oldconfig
           echo -e "$(nproc) thread compile"
           make download -j$(nproc)
-          make -j$(nproc)
+          make -j$(nproc) V=s
           echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
       - name: Check space usage
