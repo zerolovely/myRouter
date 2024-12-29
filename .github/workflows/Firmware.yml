@@ -22,7 +22,7 @@ jobs:
       - name: init
         run: |
           sudo apt-get update
-          sudo apt install -y ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
+          sudo apt-get install -y ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
           bzip2 ccache clang clangd cmake cpio curl device-tree-compiler ecj fastjar flex gawk gettext gcc-multilib \
           g++-multilib git gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev libglib2.0-dev \
           libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5 libncursesw5-dev libreadline-dev \
@@ -40,7 +40,7 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           #make defconfig
-          make oldconfig
+          N '' | make oldconfig
           echo -e "$(nproc) thread compile"
           make download -j$(nproc)
           make -j$(nproc)
